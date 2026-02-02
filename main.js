@@ -33,10 +33,14 @@ const MERGE_RECIPES = [
   { name: "purple", color: "#a0f", parents: ["red", "blue"], size: 40, mass: 40, sellPrice: 3 },
   { name: "crimson", color: "#d00", parents: ["red", "red"], size: 40, mass: 40, sellPrice: 3 },
   { name: "cobalt", color: "#00a", parents: ["blue", "blue"], size: 40, mass: 40, sellPrice: 3 },
-  { name: "teal", color: "#0ff", parents: ["blue", "purple"], size: 40, mass: 40, sellPrice: 5 },
-  { name: "magenta", color: "#f0f", parents: ["red", "purple"], size: 40, mass: 40, sellPrice: 5 },
-  { name: "Electric", color: "#ff0", parents: ["ElectricMachine", "purple"], size: 40, mass: 40, sellPrice: 5 },
-  
+  { name: "teal", color: "#0ff", parents: ["blue", "purple"], size: 40, mass: 40, sellPrice: 8 },
+  { name: "magenta", color: "#f0f", parents: ["red", "purple"], size: 40, mass: 40, sellPrice: 8 },
+  { name: "bloodstone", color: "#900", parents: ["crimson", "crimson"], size: 40, mass: 40, sellPrice: 10 },
+  { name: "sapphire", color: "#007", parents: ["cobalt", "cobalt"], size: 40, mass: 40, sellPrice: 10 },
+  { name: "amethyst", color: "#90e", parents: ["teal", "magenta"], size: 40, mass: 40, sellPrice: 5 },
+  { name: "electric", color: "#ff0", parents: ["ElectricMachine", "purple"], size: 40, mass: 40, sellPrice: 5 },
+  { name: "aquacore", color: "#008", parents: ["teal", "teal"], size: 40, mass: 40, sellPrice: 5 },
+  { name: "luminous", color: "#fff", parents: ["amethyst", "sapphire"], size: 40, mass: 40, sellPrice: 90 },
 ];
 function getColorForType(type) {
   const r = MERGE_RECIPES.find(rr => rr.name === type);
