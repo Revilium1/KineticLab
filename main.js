@@ -737,8 +737,8 @@ window.addEventListener("mousedown", e => {
   const scaleY = render.options.height / (bounds.max.y - bounds.min.y);
 
   // same sizes as drawUI
-  const buttonWidthPx = 80;
-  const buttonHeightPx = 36;
+  const buttonWidthPx = 60;
+  const buttonHeightPx = 30;
   const paddingPx = 8;
 
   const baseXWorld = currentRoom.x + currentRoom.size / 2 - (buttonWidthPx / scaleX) * 2 - (paddingPx / scaleX) * 2;
