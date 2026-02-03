@@ -30,7 +30,7 @@ const SAVE_KEY = "KineticLab-V1";
 // --- Merge Recipes ---
 const boxTypes = new Set(["red", "blue", "purple", "green"]); // Initialize with existing types
 const MERGE_RECIPES = [
-  { name: "purple", color: "#a0f", parents: ["red", "blue"], size: 40, mass: 40, sellPrice: 3 },
+  { name: "purple", color: "#a0f", parents: ["red", "blue"], size: 40, mass: 40, sellPrice: 10 },
   { name: "crimson", color: "#d00", parents: ["red", "red"], size: 40, mass: 40, sellPrice: 3 },
   { name: "cobalt", color: "#00a", parents: ["blue", "blue"], size: 40, mass: 40, sellPrice: 3 },
   { name: "teal", color: "#0ff", parents: ["blue", "purple"], size: 40, mass: 40, sellPrice: 8 },
@@ -648,7 +648,7 @@ function spawnBox(type) {
     friction: 0.2, 
     frictionAir: 0.05,
     render: { fillStyle: type === "red" ? "#f00" : "#00f" },
-    sellPrice: 1
+    sellPrice: type == "red" ? 1 : 3
   });
   /*       WARNING 
  BASE BOX MASS BALANCED FOR STACK STABILITY */
