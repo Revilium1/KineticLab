@@ -23,9 +23,11 @@ const mouse = { x: 0, y: 0 }; // world coordinates for hover
 const discoveredRecipes = new Set();
 const rooms = [];
 let currentRoom;
-const roomSize = 400;
+const roomSize = 800;
 const startX = 400, startY = 300;
 const SAVE_KEY = "KineticLab-V1";
+const dropZoneWidth = 100;
+const dropZoneHeight = 100;
 
 // --- Merge Recipes ---
 const boxTypes = new Set(["red", "blue", "purple", "green"]); // Initialize with existing types
@@ -402,6 +404,22 @@ Events.on(render, "afterRender", () => {
     ctx.restore();
   });
 });
+const dropZone = Bodies.rectangle(
+  room1.x - room1.size / 2 + dropZoneWidth / 2 + 20,  // offset a bit inside
+  room1.y - room1.size / 2 + dropZoneHeight / 2 + 20,
+  dropZoneWidth,
+  dropZoneHeight,
+  {
+    isStatic: true,
+    isSensor: true,   // sensor does not collide physically
+    label: "DROP_ZONE",
+    render: {
+      fillStyle: 'rgba(255, 255, 0, 0.2)',  // slight yellow transparent for visibility
+      strokeStyle: 'yellow',
+      lineWidth: 2,
+    }
+  }
+);
 // Move spawn point near left bottom corner of room1
 room1.addSpawnPoint(-room1.size / 2 + 75, room1.size / 2 - 75, "red");
 room1.addSpawnPoint(-room1.size / 2 + 75, room1.size / 2 - 75, "blue");
@@ -409,9 +427,9 @@ room1.addDoor(0, -roomSize/2, 60, 20, 50); // door to next room
 room1.createWalls();
 rooms.push(room1);
 currentRoom = room1;
-new Machine(80, 60, 88, 40, "EnergyBrickMaker", 5);
+new Machine(-80, 60, 88, 40, "EnergyBrickMaker", 5);
 let unlockedDoors = []; // array of door _meta objects that have been unlocked/removed
-
+Composite.add(engine.world, dropZone);
 /*       WARNING 
  SAVE-COMPAT IDENTIFIER
    ID format must remain stable across versions. */
@@ -768,18 +786,6 @@ window.addEventListener("mousedown", e => {
     spawnBox("blue");
     return;
   }
-
-  // fallback: sell bodies using world coords
-  const mouseWorld = screenToWorld(mouseScreenX, mouseScreenY);
-  const bodies = Composite.allBodies(engine.world).filter(b => !b.isStatic && b.label !== "PLAYER");
-  bodies.forEach(body => {
-    if (mouseWorld.x >= body.bounds.min.x && mouseWorld.x <= body.bounds.max.x &&
-        mouseWorld.y >= body.bounds.min.y && mouseWorld.y <= body.bounds.max.y) {
-      money += body.sellPrice || 0;
-      updateMoneyDisplay();
-      Composite.remove(engine.world, body);
-    }
-  });
 });
 
 // --- Player Controls (keyboard) ---
@@ -843,18 +849,15 @@ function playThunk() {
 Events.on(engine, "collisionStart", event => {
   event.pairs.forEach(pair => {
     const a = pair.bodyA, b = pair.bodyB;
-
-    // Merge boxes logic
+    
+    // --- BOX MERGE LOGIC ---
     const recipe = findMergeRecipe(a, b);
-    if (recipe) mergeBoxes(a, b, recipe);
-
-    /* ---------- DOOR UNLOCK ----------
-     Player collision with door:
-     - Checks money
-     - Deducts cost
-     - Saves unlocked door ID
-     - Removes body from world
-    ----------------------------------- */
+    if (recipe) {
+      mergeBoxes(a, b, recipe);
+      return; // early exit so don't re-sell or unlock door simultaneously with merged boxes
+    }
+    
+    // --- DOOR UNLOCK LOGIC ---
     let doorBody = null;
     let playerBody = null;
 
@@ -866,37 +869,53 @@ Events.on(engine, "collisionStart", event => {
       playerBody = a;
     }
 
-    // REPLACE the door-unlock block inside your collision handler with this (records id)
-  if (doorBody && playerBody) {
-  const cost = doorBody.doorCost || 0;
-  if (money >= cost) {
-    money -= cost;
-    updateMoneyDisplay();
+    if (doorBody && playerBody) {
+      const cost = doorBody.doorCost || 0;
+      if (money >= cost) {
+        money -= cost;
+        updateMoneyDisplay();
 
-    // prefer meta.id when available
-    const meta = doorBody._meta || {
-      id: null,
-      x: doorBody.position.x,
-      y: doorBody.position.y,
-      w: doorBody.bounds.max.x - doorBody.bounds.min.x,
-      h: doorBody.bounds.max.y - doorBody.bounds.min.y
-    };
+        const meta = doorBody._meta || {
+          id: null,
+          x: doorBody.position.x,
+          y: doorBody.position.y,
+          w: doorBody.bounds.max.x - doorBody.bounds.min.x,
+          h: doorBody.bounds.max.y - doorBody.bounds.min.y
+        };
 
-    // Avoid duplicates in unlockedDoors
-    if (!unlockedDoors.some(u => (meta.id && u.id && u.id === meta.id) || (!meta.id && doorMetaMatches(u, meta)))) {
-      unlockedDoors.push(meta);
+        if (!unlockedDoors.some(u => (meta.id && u.id && u.id === meta.id) || (!meta.id && doorMetaMatches(u, meta)))) {
+          unlockedDoors.push(meta);
+        }
+
+        Composite.remove(engine.world, doorBody);
+        saveGame();
+      } else {
+        console.log("Not enough money to open the door!");
+      }
+    }
+    
+    // --- DROP ZONE SELL LOGIC ---
+    let boxBody = null;
+    let sensorBody = null;
+
+    // Check if a box entered the dropZone sensor
+    if (a.label === "DROP_ZONE" && boxTypes.has(b.label) && !b.isStatic) {
+      sensorBody = a;
+      boxBody = b;
+    } else if (b.label === "DROP_ZONE" && boxTypes.has(a.label) && !a.isStatic) {
+      sensorBody = b;
+      boxBody = a;
     }
 
-    Composite.remove(engine.world, doorBody); // remove door, allow passage
-
-    saveGame(); // persist unlocked door
-  } else {
-    console.log("Not enough money to open the door!");
-  }
-}
+    if (sensorBody && boxBody) {
+      money += boxBody.sellPrice || 0;
+      updateMoneyDisplay();
+      Composite.remove(engine.world, boxBody);
+      playThunk();
+      saveGame();
+    }
   });
 });
-
 /* ---------- SCREEN-SPACE UI ----------
    Uses manual transform reset (setTransform(1,0,0,1,0,0))
    because Matter render is world-space by default.
