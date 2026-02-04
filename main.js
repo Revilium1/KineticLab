@@ -36,7 +36,6 @@ const MERGE_RECIPES = [
   { name: "brown", color: "#964b00", parents: ["green", "red"], size: 40, mass: 40, sellPrice: 8},
   { name: "orange", color: "#ffa500", parents: ["purple", "pink"], size: 40, mass: 40, sellPrice: 7},
   { name: "bouncy", color: "#000", parents: ["green", "blue"], size: 40, mass: 40, sellPrice: 10},
-  { name: "sticky", color: "#000", parents: ["green", "brown"], size: 40, mass: 40, sellPrice: 20},
   { name: "seat", color: "#000", parents: ["brown", "red"], size: 40, mass: 40, sellPrice: 10},
   { name: "acid", color: "#000", parents: ["green", "blue"], size: 40, mass: 40, sellPrice: 6},
   { name: "energy", color: "#ff0", parents: ["purple", "EnergyBrickMaker"], size: 40, mass: 40, sellPrice: 7},
