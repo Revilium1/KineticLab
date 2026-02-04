@@ -30,17 +30,22 @@ const SAVE_KEY = "KineticLab-V1";
 // --- Merge Recipes ---
 const boxTypes = new Set(["red", "blue", "purple", "green"]); // Initialize with existing types
 const MERGE_RECIPES = [
-  { name: "purple", color: "#a0f", parents: ["red", "blue"], size: 40, mass: 40, sellPrice: 5 },
-  { name: "green", color: "#0f0", parents: ["purple", "blue"], size: 40, mass: 40, sellPrice: 3 },
-  { name: "brown", color: "#964B00", parents: ["green", "red"], size: 40, mass: 40, sellPrice: 3 },
-  { name: "teal", color: "#0ff", parents: ["red", "purple"], size: 40, mass: 40, sellPrice: 8 },
-  { name: "magenta", color: "#f0f", parents: ["red", "purple"], size: 40, mass: 40, sellPrice: 8 },
-  { name: "bloodstone", color: "#900", parents: ["crimson", "crimson"], size: 40, mass: 40, sellPrice: 10 },
-  { name: "sapphire", color: "#007", parents: ["cobalt", "cobalt"], size: 40, mass: 40, sellPrice: 10 },
-  { name: "amethyst", color: "#90e", parents: ["teal", "magenta"], size: 40, mass: 40, sellPrice: 5 },
-  { name: "electric", color: "#ff0", parents: ["ElectricMachine", "purple"], size: 40, mass: 40, sellPrice: 5 },
-  { name: "aquacore", color: "#008", parents: ["teal", "teal"], size: 40, mass: 40, sellPrice: 5 },
-  { name: "luminous", color: "#fff", parents: ["amethyst", "sapphire"], size: 40, mass: 40, sellPrice: 90 },
+  { name: "purple", color: "#a0f", parents: ["red", "blue"], size: 40, mass: 40, sellPrice: 5},
+  { name: "green", color: "#0f0", parents: ["purple", "blue"], size: 40, mass: 40, sellPrice: 7},
+  { name: "pink", color: "#ffc0cb", parents: ["purple", "red"], size: 40, mass: 40, sellPrice: 6},
+  { name: "brown", color: "#964b00", parents: ["green", "red"], size: 40, mass: 40, sellPrice: 8},
+  { name: "orange", color: "#ffa500", parents: ["purple", "pink"], size: 40, mass: 40, sellPrice: 7},
+  { name: "bouncy", color: "#000", parents: ["green", "blue"], size: 40, mass: 40, sellPrice: 10},
+  { name: "sticky", color: "#000", parents: ["green", "brown"], size: 40, mass: 40, sellPrice: 20},
+  { name: "seat", color: "#000", parents: ["brown", "red"], size: 40, mass: 40, sellPrice: 10},
+  { name: "acid", color: "#000", parents: ["green", "blue"], size: 40, mass: 40, sellPrice: 6},
+  { name: "energy", color: "#ff0", parents: ["purple", "EnergyBrickMaker"], size: 40, mass: 40, sellPrice: 7},
+  { name: "light", color: "#fff", parents: ["purple", "energy"], size: 40, mass: 40, sellPrice: 12},
+  { name: "laser", color: "#f00", parents: ["light", "red"], size: 40, mass: 40, sellPrice: 30},
+  { name: "copper", color: "#000", parents: ["brown", "energy"], size: 40, mass: 40, sellPrice: 42},
+  { name: "dirt", color: "#000", parents: ["brown", "green"], size: 40, mass: 40, sellPrice: 9},
+  { name: "stone", color: "#888", parents: ["dirt", "dirt"], size: 40, mass: 40, sellPrice: 15},
+  { name: "gold", color: "#ff0", parents: ["copper", "stone"], size: 40, mass: 80, sellPrice: 600},
 ];
 function getColorForType(type) {
   const r = MERGE_RECIPES.find(rr => rr.name === type);
@@ -405,7 +410,7 @@ room1.addDoor(0, -roomSize/2, 60, 20, 50); // door to next room
 room1.createWalls();
 rooms.push(room1);
 currentRoom = room1;
-new Machine(80, 60, 88, 40, "ElectricMachine", 5);
+new Machine(80, 60, 88, 40, "EnergyBrickMaker", 5);
 let unlockedDoors = []; // array of door _meta objects that have been unlocked/removed
 
 /*       WARNING 
