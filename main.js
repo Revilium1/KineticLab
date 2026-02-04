@@ -30,10 +30,10 @@ const SAVE_KEY = "KineticLab-V1";
 // --- Merge Recipes ---
 const boxTypes = new Set(["red", "blue", "purple", "green"]); // Initialize with existing types
 const MERGE_RECIPES = [
-  { name: "purple", color: "#a0f", parents: ["red", "blue"], size: 40, mass: 40, sellPrice: 10 },
-  { name: "crimson", color: "#d00", parents: ["red", "red"], size: 40, mass: 40, sellPrice: 3 },
-  { name: "cobalt", color: "#00a", parents: ["blue", "blue"], size: 40, mass: 40, sellPrice: 3 },
-  { name: "teal", color: "#0ff", parents: ["blue", "purple"], size: 40, mass: 40, sellPrice: 8 },
+  { name: "purple", color: "#a0f", parents: ["red", "blue"], size: 40, mass: 40, sellPrice: 5 },
+  { name: "green", color: "#0f0", parents: ["purple", "blue"], size: 40, mass: 40, sellPrice: 3 },
+  { name: "brown", color: "#964B00", parents: ["green", "red"], size: 40, mass: 40, sellPrice: 3 },
+  { name: "teal", color: "#0ff", parents: ["red", "purple"], size: 40, mass: 40, sellPrice: 8 },
   { name: "magenta", color: "#f0f", parents: ["red", "purple"], size: 40, mass: 40, sellPrice: 8 },
   { name: "bloodstone", color: "#900", parents: ["crimson", "crimson"], size: 40, mass: 40, sellPrice: 10 },
   { name: "sapphire", color: "#007", parents: ["cobalt", "cobalt"], size: 40, mass: 40, sellPrice: 10 },
